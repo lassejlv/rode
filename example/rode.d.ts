@@ -49,6 +49,75 @@ declare namespace Rode {
   }
 
   /**
+   * Path manipulation utilities
+   */
+  namespace path {
+    /**
+     * Join path segments together
+     * @param paths - Path segments to join
+     * @returns Joined path
+     */
+    function join(...paths: string[]): string
+
+    /**
+     * Resolve path segments to an absolute path
+     * @param paths - Path segments to resolve
+     * @returns Absolute path
+     */
+    function resolve(...paths: string[]): string
+
+    /**
+     * Get directory name of a path
+     * @param path - Input path
+     * @returns Directory name
+     */
+    function dirname(path: string): string
+
+    /**
+     * Get base name of a path
+     * @param path - Input path
+     * @param ext - Optional extension to remove
+     * @returns Base name
+     */
+    function basename(path: string, ext?: string): string
+
+    /**
+     * Get file extension
+     * @param path - Input path
+     * @returns File extension (including the dot)
+     */
+    function extname(path: string): string
+
+    /**
+     * Check if path is absolute
+     * @param path - Input path
+     * @returns True if absolute
+     */
+    function isAbsolute(path: string): boolean
+
+    /**
+     * Normalize a path (resolve . and ..)
+     * @param path - Input path
+     * @returns Normalized path
+     */
+    function normalize(path: string): string
+
+    /**
+     * Get relative path from one path to another
+     * @param from - Source path
+     * @param to - Target path
+     * @returns Relative path
+     */
+    function relative(from: string, to: string): string
+
+    /** Path separator ('/' on Unix, '\' on Windows) */
+    const sep: string
+
+    /** PATH environment variable delimiter (':' on Unix, ';' on Windows) */
+    const delimiter: string
+  }
+
+  /**
    * File system operations
    */
   namespace fs {

@@ -226,7 +226,7 @@ fn convert_import_to_require(line: &str) -> String {
                 // Handle different import styles
                 if import_part.starts_with("import {") && import_part.ends_with("}") {
                     // Named imports: import { name1, name2 } from 'module'
-                    let imports = &import_part[7..import_part.len() - 1].trim();
+                    let imports = import_part[8..import_part.len() - 1].trim();
                     return format!("const {{ {} }} = require('{}');", imports, module_path);
                 } else if import_part.starts_with("import ") {
                     // Default import: import name from 'module'
@@ -241,8 +241,85 @@ fn convert_import_to_require(line: &str) -> String {
     format!("// {}", line)
 }
 
+fn convert_export_to_commonjs_with_name(line: &str) -> (String, Option<String>) {
+    let line = line.trim();
+
+    if line.starts_with("export const ")
+        || line.starts_with("export let ")
+        || line.starts_with("export var ")
+    {
+        // export const NAME = value -> const NAME = value
+        let after_export = &line[7..]; // Remove "export "
+        if let Some(equals_pos) = after_export.find('=') {
+            let before_equals = after_export[..equals_pos].trim();
+            let var_parts: Vec<&str> = before_equals.split_whitespace().collect();
+            if var_parts.len() >= 2 {
+                let var_name = var_parts[1];
+                return (after_export.to_string(), Some(var_name.to_string()));
+            }
+        }
+    } else if line.starts_with("export function ") {
+        // export function name() { -> function name() {
+        let after_export = &line[7..]; // Remove "export "
+        if let Some(paren_pos) = after_export.find('(') {
+            let func_name = after_export[9..paren_pos].trim(); // Remove "function "
+            return (after_export.to_string(), Some(func_name.to_string()));
+        }
+    } else if line.starts_with("export default ") {
+        // export default value -> module.exports = value;
+        let value = &line[15..]; // Remove "export default "
+        return (format!("module.exports = {};", value), None);
+    }
+
+    // Fallback: comment out
+    (format!("// {}", line), None)
+}
+
 pub fn is_typescript_file(filename: &str) -> bool {
     filename.ends_with(".ts") || filename.ends_with(".tsx")
+}
+
+pub fn convert_es6_imports(source_code: &str) -> String {
+    let lines: Vec<&str> = source_code.lines().collect();
+    let mut result_lines = Vec::new();
+    let mut exports = Vec::new();
+    let mut i = 0;
+
+    while i < lines.len() {
+        let line = lines[i].trim();
+
+        // Convert ES6 imports to CommonJS requires
+        if line.starts_with("import ") && !line.starts_with("import type ") {
+            let converted = convert_import_to_require(lines[i]);
+            if !converted.is_empty() {
+                result_lines.push(converted);
+            }
+        }
+        // Convert ES6 exports to CommonJS exports
+        else if line.starts_with("export ") {
+            let (converted_line, export_name) = convert_export_to_commonjs_with_name(lines[i]);
+            result_lines.push(converted_line);
+            if let Some(name) = export_name {
+                exports.push(name);
+            }
+        } else {
+            // Keep regular lines as-is
+            result_lines.push(lines[i].to_string());
+        }
+
+        i += 1;
+    }
+
+    // Add module.exports at the end if we have exports
+    if !exports.is_empty() {
+        result_lines.push(String::new());
+        result_lines.push("// CommonJS exports".to_string());
+        for export_name in exports {
+            result_lines.push(format!("module.exports.{} = {};", export_name, export_name));
+        }
+    }
+
+    result_lines.join("\n")
 }
 
 #[cfg(test)]

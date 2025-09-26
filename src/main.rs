@@ -73,6 +73,9 @@ fn run_once(filename: String) {
     // Strip TypeScript if it's a .ts file
     let processed_code = if typescript::is_typescript_file(&filename) {
         typescript::strip_typescript(&code)
+    } else if filename.ends_with(".js") {
+        // Process JS files for ES6 imports but skip TypeScript stripping
+        typescript::convert_es6_imports(&code)
     } else {
         code
     };
@@ -147,6 +150,9 @@ fn run_script(filename: &str) {
     // Strip TypeScript if it's a .ts file
     let processed_code = if typescript::is_typescript_file(filename) {
         typescript::strip_typescript(&code)
+    } else if filename.ends_with(".js") {
+        // Process JS files for ES6 imports but skip TypeScript stripping
+        typescript::convert_es6_imports(&code)
     } else {
         code
     };

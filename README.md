@@ -108,6 +108,39 @@ console.log('PI:', math.PI) // 3.14159
 console.log('Square:', math.default(4)) // 16
 ```
 
+### Path Utilities (`Rode.path`)
+
+Cross-platform path manipulation utilities:
+
+```javascript
+// Join path segments
+const fullPath = Rode.path.join('/home', 'user', 'documents', 'file.txt')
+console.log(fullPath) // '/home/user/documents/file.txt'
+
+// Resolve absolute path
+const absolutePath = Rode.path.resolve('docs', 'readme.txt')
+
+// Get directory name
+const dir = Rode.path.dirname('/home/user/file.txt') // '/home/user'
+
+// Get filename
+const filename = Rode.path.basename('/home/user/file.txt') // 'file.txt'
+const name = Rode.path.basename('/home/user/file.txt', '.txt') // 'file'
+
+// Get file extension
+const ext = Rode.path.extname('archive.tar.gz') // '.gz'
+
+// Check if path is absolute
+const isAbs = Rode.path.isAbsolute('/home/user') // true
+
+// Normalize path (resolve . and ..)
+const normalized = Rode.path.normalize('./src/../lib/utils.js') // 'lib/utils.js'
+
+// Path constants
+console.log(Rode.path.sep) // '/' on Unix, '\' on Windows
+console.log(Rode.path.delimiter) // ':' on Unix, ';' on Windows
+```
+
 ### Console
 
 ```javascript

@@ -56,8 +56,14 @@ fn module_require(
         }
     };
 
-    // Transform exports to module.exports
-    let transformed_source = transform_module_source(&source);
+    // Transform ES6 imports/exports to CommonJS
+    let transformed_source = if module_path.ends_with(".js") {
+        crate::typescript::convert_es6_imports(&source)
+    } else if crate::typescript::is_typescript_file(&module_path) {
+        crate::typescript::strip_typescript(&source)
+    } else {
+        transform_module_source(&source)
+    };
 
     // Execute the module and return its exports
     let wrapped_source = format!(

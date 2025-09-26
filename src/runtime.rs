@@ -31,6 +31,7 @@ impl Runtime {
         crate::utils::setup_console(scope);
         crate::utils::setup_fs(scope);
         crate::utils::setup_http(scope);
+        crate::utils::setup_path(scope);
         crate::modules::setup_module_system(scope);
 
         let code_str = v8::String::new(scope, code).unwrap();
