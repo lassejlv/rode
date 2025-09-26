@@ -108,6 +108,83 @@ console.log('PI:', math.PI) // 3.14159
 console.log('Square:', math.default(4)) // 16
 ```
 
+### Password Security (`Rode.password`)
+
+Secure password hashing, verification, and generation:
+
+```javascript
+// Hash a password with bcrypt
+const password = 'MySecurePassword123!'
+const hash = Rode.password.hash(password)
+console.log(hash) // '$2b$12$...'
+
+// Verify password against hash
+const isValid = Rode.password.verify(password, hash)
+console.log(isValid) // true
+
+// Custom rounds (higher = more secure but slower)
+const strongHash = Rode.password.hash(password, 15)
+
+// Analyze password strength
+const strength = Rode.password.strength('weak123')
+console.log(strength.score) // 45
+console.log(strength.level) // 'fair'
+console.log(strength.feedback) // ['Add symbols', 'Use more characters']
+
+// Generate secure passwords
+const randomPassword = Rode.password.generate()
+console.log(randomPassword) // 'rM}09s=qP!FS*I=q'
+
+// Custom generation options
+const customPassword = Rode.password.generate(12, {
+  lowercase: true,
+  uppercase: true,
+  numbers: true,
+  symbols: false,
+  excludeSimilar: true,
+})
+console.log(customPassword) // 'AbCdEfGh2345'
+```
+
+### UUID Generation (`Rode.uuid`)
+
+UUID generation and manipulation utilities:
+
+```javascript
+// Generate random UUID v4
+const id = Rode.uuid.v4()
+console.log(id) // 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
+
+// Generate time-based UUID v1
+const timeId = Rode.uuid.v1()
+console.log(timeId) // '6c84fb90-12c4-11e1-840d-7b25c5ee775a'
+
+// Generate time-ordered UUID v7 (recommended for new applications)
+const v7Id = Rode.uuid.v7()
+console.log(v7Id) // '01890a5b-def0-7000-8000-123456789abc'
+
+// Get nil UUID (all zeros)
+const nil = Rode.uuid.nil()
+console.log(nil) // '00000000-0000-0000-0000-000000000000'
+
+// Validate UUID format
+const isValid = Rode.uuid.validate('f47ac10b-58cc-4372-a567-0e02b2c3d479')
+console.log(isValid) // true
+
+// Get UUID version
+const version = Rode.uuid.version('f47ac10b-58cc-4372-a567-0e02b2c3d479')
+console.log(version) // 4
+
+// Parse and normalize UUID
+const normalized = Rode.uuid.parse('f47ac10b-58cc-4372-a567-0e02b2c3d479')
+console.log(normalized) // 'F47AC10B-58CC-4372-A567-0E02B2C3D479'
+
+// Practical usage
+const recordId = Rode.uuid.v4()
+const sessionToken = Rode.uuid.v4()
+const filename = `log_${Rode.uuid.v4()}.txt`
+```
+
 ### Path Utilities (`Rode.path`)
 
 Cross-platform path manipulation utilities:

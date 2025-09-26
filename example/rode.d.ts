@@ -49,6 +49,121 @@ declare namespace Rode {
   }
 
   /**
+   * Password strength analysis result
+   */
+  interface PasswordStrength {
+    /** Strength score (0-100) */
+    score: number
+    /** Strength level (weak, fair, good, strong) */
+    level: string
+    /** Array of feedback messages */
+    feedback: string[]
+  }
+
+  /**
+   * Password generation options
+   */
+  interface PasswordGenOptions {
+    /** Include lowercase letters (default: true) */
+    lowercase?: boolean
+    /** Include uppercase letters (default: true) */
+    uppercase?: boolean
+    /** Include numbers (default: true) */
+    numbers?: boolean
+    /** Include symbols (default: true) */
+    symbols?: boolean
+    /** Exclude similar characters like 0/O, 1/l (default: false) */
+    excludeSimilar?: boolean
+  }
+
+  /**
+   * Password hashing and security utilities
+   */
+  namespace password {
+    /**
+     * Hash a password using bcrypt
+     * @param password - Password to hash
+     * @param rounds - Number of salt rounds (default: 12, min: 4, max: 20)
+     * @returns Bcrypt hash string
+     */
+    function hash(password: string, rounds?: number): string
+
+    /**
+     * Verify a password against a hash
+     * @param password - Password to verify
+     * @param hash - Hash to verify against
+     * @returns True if password matches hash
+     */
+    function verify(password: string, hash: string): boolean
+
+    /**
+     * Analyze password strength
+     * @param password - Password to analyze
+     * @returns Strength analysis result
+     */
+    function strength(password: string): PasswordStrength
+
+    /**
+     * Generate a secure random password
+     * @param length - Password length (default: 16, min: 4, max: 128)
+     * @param options - Generation options
+     * @returns Generated password
+     */
+    function generate(length?: number, options?: PasswordGenOptions): string
+  }
+
+  /**
+   * UUID generation and utilities
+   */
+  namespace uuid {
+    /**
+     * Generate a random UUID v4
+     * @returns Random UUID v4 string
+     */
+    function v4(): string
+
+    /**
+     * Generate a time-based UUID v1
+     * @returns Time-based UUID v1 string
+     */
+    function v1(): string
+
+    /**
+     * Generate a time-ordered UUID v7 (recommended)
+     * @returns Time-ordered UUID v7 string
+     */
+    function v7(): string
+
+    /**
+     * Get the nil UUID (all zeros)
+     * @returns Nil UUID string
+     */
+    function nil(): string
+
+    /**
+     * Parse and normalize a UUID string
+     * @param uuid - UUID string to parse
+     * @returns Normalized UUID string
+     * @throws Error if UUID format is invalid
+     */
+    function parse(uuid: string): string
+
+    /**
+     * Validate a UUID string
+     * @param uuid - UUID string to validate
+     * @returns True if valid UUID format
+     */
+    function validate(uuid: string): boolean
+
+    /**
+     * Get the version of a UUID
+     * @param uuid - UUID string to analyze
+     * @returns Version number (1-5) or null if invalid
+     */
+    function version(uuid: string): number | null
+  }
+
+  /**
    * Path manipulation utilities
    */
   namespace path {
