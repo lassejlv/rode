@@ -1,4 +1,6 @@
+mod modules;
 mod runtime;
+mod typescript;
 mod utils;
 
 use chrono::Local;
@@ -68,14 +70,20 @@ fn run_once(filename: String) {
         }
     };
 
+    // Strip TypeScript if it's a .ts file
+    let processed_code = if typescript::is_typescript_file(&filename) {
+        typescript::strip_typescript(&code)
+    } else {
+        code
+    };
+
     let mut runtime = Runtime::new();
 
-    match runtime.execute(&code) {
+    match runtime.execute_with_filename(&processed_code, &filename) {
         Ok(_) => {}
         Err(err) => {
             println!();
-            print_error("Runtime error");
-            println!("  {}", err.red());
+            print_error(&err);
             process::exit(1);
         }
     }
@@ -136,17 +144,23 @@ fn run_script(filename: &str) {
         }
     };
 
+    // Strip TypeScript if it's a .ts file
+    let processed_code = if typescript::is_typescript_file(filename) {
+        typescript::strip_typescript(&code)
+    } else {
+        code
+    };
+
     let mut runtime = Runtime::new();
 
-    match runtime.execute(&code) {
+    match runtime.execute_with_filename(&processed_code, &filename) {
         Ok(_) => {
             println!();
             print_separator();
         }
         Err(err) => {
             println!();
-            print_error("Runtime error");
-            println!("  {}", err.red());
+            print_error(&err);
             print_separator();
         }
     }

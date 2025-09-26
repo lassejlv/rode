@@ -16,7 +16,8 @@ cargo run -- script.js
 
 ```bash
 # Run a JavaScript file once
-rode script.js
+rode script.js     # JavaScript
+rode script.ts     # TypeScript (auto-stripped)
 
 # Run with file watching (auto-restart on changes)
 rode --watch script.js
@@ -83,6 +84,28 @@ Rode.http.serve((request) => {
     body: 'Not Found',
   }
 }, 3000) // Port 3000 (default: 8000)
+```
+
+### Modules (CommonJS)
+
+```javascript
+// math.js - Export functions and constants
+export function add(a, b) {
+  return a + b
+}
+
+export const PI = 3.14159
+
+export default function square(x) {
+  return x * x
+}
+
+// main.js - Import from other modules
+const math = require('./math.js')
+
+console.log('Add:', math.add(5, 3)) // 8
+console.log('PI:', math.PI) // 3.14159
+console.log('Square:', math.default(4)) // 16
 ```
 
 ### Console
@@ -161,15 +184,57 @@ rode -w server.js
 ## Features
 
 - **Fast V8 Engine**: Built on Google's V8 JavaScript engine
+- **TypeScript Support**: Automatic TypeScript stripping for .ts files
 - **File System API**: Complete file and directory operations
 - **HTTP Server**: Built-in web server capabilities
+- **Module System**: CommonJS-style imports with ES6 export syntax
 - **Watch Mode**: Auto-restart on file changes
-- **TypeScript Support**: Full type definitions included
+- **Type Definitions**: Full TypeScript definitions included
 - **Zero Dependencies**: No external JavaScript dependencies
 
 ## TypeScript Support
 
-Rode includes TypeScript definitions. For the best development experience:
+Rode automatically strips TypeScript syntax from `.ts` files:
+
+```typescript
+// math.ts - TypeScript source
+function add(a: number, b: number): number {
+  return a + b
+}
+
+const result: number = add(5, 3)
+console.log('Result:', result)
+```
+
+```bash
+# Runs automatically with type stripping
+rode math.ts
+```
+
+**Supported TypeScript Features:**
+
+- Type annotations on variables and functions
+- Function parameter and return types
+- Interface declarations (removed)
+- Type alias declarations (removed)
+- Enum declarations (removed)
+- **ES6 imports** (converted to CommonJS requires)
+
+**Import Conversion Examples:**
+
+```typescript
+// TypeScript ES6 imports
+import './module'
+import { func } from './utils'
+import defaultExport from './lib'
+
+// Automatically becomes CommonJS
+require('./module')
+const { func } = require('./utils')
+const defaultExport = require('./lib')
+```
+
+For the best development experience:
 
 1. Include `rode.d.ts` in your project
 2. Use an editor with TypeScript support
