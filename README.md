@@ -49,6 +49,56 @@ CONFIG_PATH=${HOME}/.config/myapp
 - Single quotes (literal, no expansion)
 - System environment variable references
 
+## HTTP Client (`fetch`)
+
+Global `fetch()` function for making HTTP requests, similar to the browser Fetch API.
+
+```javascript
+// GET request
+const response = fetch('https://api.example.com/data')
+console.log(response.status, response.statusText)
+console.log(response.text())
+
+// POST request with JSON
+const postResponse = fetch('https://api.example.com/users', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name: 'John', age: 30 }),
+  timeout: 10000, // 10 seconds
+})
+
+const data = postResponse.json()
+console.log(data)
+
+// Error handling
+try {
+  const response = fetch('https://api.example.com/data')
+  if (response.ok) {
+    console.log('Success:', response.json())
+  } else {
+    console.log('HTTP Error:', response.status)
+  }
+} catch (error) {
+  console.error('Network error:', error)
+}
+```
+
+**Supported options:**
+
+- `method`: HTTP method (GET, POST, PUT, DELETE, PATCH, HEAD)
+- `headers`: Request headers object
+- `body`: Request body string
+- `timeout`: Request timeout in milliseconds (default: 30000)
+
+**Response object:**
+
+- `status`: HTTP status code
+- `statusText`: HTTP status message
+- `ok`: Boolean indicating success (2xx status)
+- `headers`: Response headers object
+- `text()`: Get response body as string
+- `json()`: Parse response body as JSON
+
 ## Usage
 
 ```bash

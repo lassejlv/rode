@@ -1,4 +1,5 @@
 pub mod console;
+pub mod fetch;
 pub mod fs;
 pub mod http;
 pub mod password;
@@ -8,6 +9,7 @@ pub mod prompt;
 pub mod uuid;
 
 pub use console::setup_console;
+pub use fetch::setup_fetch;
 pub use fs::setup_fs;
 pub use http::setup_http;
 pub use password::setup_password;

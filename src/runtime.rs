@@ -25,6 +25,7 @@ impl Runtime {
         let scope = &mut v8::ContextScope::new(scope, context);
 
         crate::utils::setup_console(scope);
+        crate::utils::setup_fetch(scope);
         crate::utils::setup_fs(scope);
         crate::utils::setup_http(scope);
         crate::utils::setup_password(scope);

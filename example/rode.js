@@ -1,15 +1,23 @@
-console.log(Rode.env.DATABASE_URL)
+const command = Rode.args[1].replace('--', '')
 
-const contentForFile = prompt('Enter the content for the file')
-const filename = prompt('Enter the filename')
+async function main() {
+  try {
+    switch (command) {
+      case 'users':
+        const users = fetch('https://jsonplaceholder.typicode.com/users')
 
-const confirmation = alert('Are you sure you want to write to the file?')
+        const usersJson = users.json()
 
-if (!confirmation) {
-  console.log('File not written')
-  Rode.exit(1)
+        Rode.fs.writeFile('users.json', JSON.stringify(usersJson, null, 2))
+
+        break
+      default:
+        throw new Error(`Unknown command: ${command}`)
+    }
+  } catch (error) {
+    console.error(error)
+    Rode.exit(1)
+  }
 }
 
-Rode.fs.writeFile(filename, contentForFile)
-
-console.log('File written')
+main()

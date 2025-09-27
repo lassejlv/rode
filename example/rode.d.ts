@@ -402,3 +402,53 @@ declare function alert(message?: string): boolean
  * ```
  */
 declare function prompt(message?: string, defaultValue?: string): string
+
+/**
+ * Fetch API for making HTTP requests
+ *
+ * @example
+ * ```typescript
+ * // GET request
+ * const response = fetch('https://api.example.com/data')
+ * console.log(response.status, response.text())
+ *
+ * // POST request with JSON
+ * const postResponse = fetch('https://api.example.com/users', {
+ *   method: 'POST',
+ *   headers: { 'Content-Type': 'application/json' },
+ *   body: JSON.stringify({ name: 'John', age: 30 })
+ * })
+ *
+ * // Parse JSON response
+ * const data = postResponse.json()
+ * console.log(data)
+ * ```
+ */
+declare function fetch(url: string, options?: FetchOptions): FetchResponse
+
+// Fetch API types
+interface FetchOptions {
+  /** HTTP method (default: 'GET') */
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD'
+  /** Request headers */
+  headers?: Record<string, string>
+  /** Request body (for POST, PUT, PATCH) */
+  body?: string
+  /** Request timeout in milliseconds (default: 30000) */
+  timeout?: number
+}
+
+interface FetchResponse {
+  /** HTTP status code */
+  status: number
+  /** HTTP status text */
+  statusText: string
+  /** True if status is 2xx */
+  ok: boolean
+  /** Response headers */
+  headers: Record<string, string>
+  /** Get response body as text */
+  text(): string
+  /** Parse response body as JSON */
+  json(): any
+}
