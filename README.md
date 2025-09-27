@@ -12,6 +12,43 @@ cargo build --release
 cargo run -- script.js
 ```
 
+## Environment Configuration
+
+Rode automatically loads environment variables from `.env` files before starting. This happens before any script execution, making environment variables immediately available.
+
+**File precedence:** `.env.local` → `.env`
+
+### .env File Format
+
+```bash
+# Comments start with #
+APP_NAME=My Application
+NODE_ENV=development
+
+# Variable expansion
+BASE_URL=http://localhost:3000
+API_URL=${BASE_URL}/api
+
+# Quoted values (support escape sequences)
+SECRET="my secret key"
+MULTILINE="Line 1\nLine 2\tTabbed"
+
+# Single quotes (no expansion or escaping)
+LITERAL='${HOME} stays as literal text'
+
+# System variable expansion
+LOG_FILE=/var/log/${APP_NAME}.log
+CONFIG_PATH=${HOME}/.config/myapp
+```
+
+**Supported features:**
+
+- Comments with `#`
+- Variable expansion: `${VAR}` and `$VAR`
+- Double quotes with escape sequences (`\n`, `\r`, `\t`, `\\`, `\"`)
+- Single quotes (literal, no expansion)
+- System environment variable references
+
 ## Usage
 
 ```bash
@@ -223,6 +260,95 @@ console.log(Rode.path.delimiter) // ':' on Unix, ';' on Windows
 ```javascript
 // Standard console output
 console.log('Hello', 'World', 42)
+```
+
+### Interactive Input
+
+```javascript
+// Get user input from the console
+const name = prompt('What is your name?')
+console.log(`Hello, ${name}!`)
+
+// Prompt with default value
+const age = prompt('What is your age?', '25')
+console.log(`You are ${age} years old`)
+
+// Empty prompt (just shows >)
+const input = prompt()
+
+// Interactive menu example
+const choice = prompt('Choose option (1-3)', '1')
+switch (choice) {
+  case '1':
+    console.log('Option 1 selected')
+    break
+  case '2':
+    console.log('Option 2 selected')
+    break
+  case '3':
+    console.log('Option 3 selected')
+    break
+  default:
+    console.log('Invalid choice')
+}
+
+// Yes/No confirmation
+const confirmed = alert('Continue with operation?') // Shows: Continue with operation? (Y/n):
+if (confirmed) {
+  console.log('User confirmed')
+} else {
+  console.log('User cancelled')
+}
+```
+
+### Enhanced Console
+
+```javascript
+// Standard logging with colors
+console.log('Normal message')
+console.info('Info message (blue)')
+console.warn('Warning message (yellow)')
+console.error('Error message (red)')
+
+// Display data in tables
+const users = [
+  { name: 'John', age: 30 },
+  { name: 'Jane', age: 25 },
+]
+console.table(users)
+
+// Object inspection
+console.dir({ nested: { data: 'value' } })
+
+// Timing operations
+console.time('operation')
+// ... some work
+console.timeEnd('operation') // Shows elapsed time
+
+// Counting
+console.count('iterations') // iterations: 1
+console.count('iterations') // iterations: 2
+
+// Clear screen
+console.clear()
+```
+
+### Process & Environment
+
+```javascript
+// Access command line arguments
+console.log('Script arguments:', Rode.args) // ['arg1', 'arg2']
+console.log('All arguments:', Rode.argv) // ['rode', 'script.js', 'arg1', 'arg2']
+
+// Environment variables
+console.log('Home directory:', Rode.env.HOME)
+console.log('PATH:', Rode.env.PATH)
+console.log('All env vars:', Rode.env)
+
+// Exit the process
+if (someCondition) {
+  Rode.exit(1) // Exit with code 1
+}
 ```
 
 ## Examples

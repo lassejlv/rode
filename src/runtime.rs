@@ -19,10 +19,6 @@ impl Runtime {
         Self { isolate }
     }
 
-    // pub fn execute(&mut self, code: &str) -> Result<(), String> {
-    //     self.execute_with_filename(code, "script.js")
-    // }
-
     pub fn execute_with_filename(&mut self, code: &str, filename: &str) -> Result<(), String> {
         let scope = &mut v8::HandleScope::new(&mut self.isolate);
         let context = v8::Context::new(scope);
@@ -33,6 +29,8 @@ impl Runtime {
         crate::utils::setup_http(scope);
         crate::utils::setup_password(scope);
         crate::utils::setup_path(scope);
+        crate::utils::setup_process(scope);
+        crate::utils::setup_prompt(scope);
         crate::utils::setup_uuid(scope);
         crate::modules::setup_module_system(scope);
 

@@ -113,6 +113,27 @@ declare namespace Rode {
   }
 
   /**
+   * Exit the process with an optional exit code
+   * @param code Exit code (default: 0)
+   */
+  function exit(code?: number): never
+
+  /**
+   * Command line arguments (excluding program name)
+   */
+  const args: string[]
+
+  /**
+   * All command line arguments (including program name)
+   */
+  const argv: string[]
+
+  /**
+   * Environment variables as key-value pairs
+   */
+  const env: Record<string, string>
+
+  /**
    * UUID generation and utilities
    */
   namespace uuid {
@@ -354,19 +375,30 @@ declare namespace Rode {
 }
 
 /**
- * Console API for logging output
+ * Interactive confirmation dialog
+ *
+ * @param message Optional message to display
+ * @returns True for Y/yes/enter, false for n/no
+ *
+ * @example
+ * ```js
+ * const confirmed = alert('Continue?')  // Shows: Continue? (Y/n):
+ * ```
  */
-declare namespace console {
-  /**
-   * Log messages to the console
-   *
-   * @param message Primary message to log
-   * @param optionalParams Additional parameters to log
-   *
-   * @example
-   * ```js
-   * console.log('Hello', 'World', 42);
-   * ```
-   */
-  function log(message?: any, ...optionalParams: any[]): void
-}
+declare function alert(message?: string): boolean
+
+/**
+ * Interactive input prompt function
+ *
+ * @param message Optional message to display to the user
+ * @param defaultValue Optional default value if user enters nothing
+ * @returns The user's input as a string
+ *
+ * @example
+ * ```js
+ * const name = prompt('What is your name?')
+ * const age = prompt('Age?', '25')  // Default value
+ * const input = prompt()  // Just shows ">"
+ * ```
+ */
+declare function prompt(message?: string, defaultValue?: string): string

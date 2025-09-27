@@ -1,21 +1,15 @@
-// // import { add } from './math.js'
+console.log(Rode.env.DATABASE_URL)
 
-// // const result = add(1, 2)
-// // console.log(result)
+const contentForFile = prompt('Enter the content for the file')
+const filename = prompt('Enter the filename')
 
-// const rodeTypescriptTypes = Rode.fs.readFile('example/rode.d.ts')
+const confirmation = alert('Are you sure you want to write to the file?')
 
-// const path = Rode.path.relative('text.txt', 'text2.txt')
-// console.log(path)
+if (!confirmation) {
+  console.log('File not written')
+  Rode.exit(1)
+}
 
-// console.log(Rode.uuid.v7())
-// console.log(Rode.fs.readDir('example'))
+Rode.fs.writeFile(filename, contentForFile)
 
-const resp = 0 == '0'
-
-console.log(resp)
-
-const pass = Rode.password.generate()
-const hash = Rode.password.hash(pass)
-console.log(hash)
-console.log(Rode.password.verify(pass + '1', hash))
+console.log('File written')

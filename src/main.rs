@@ -1,3 +1,4 @@
+mod env_parser;
 mod modules;
 mod runtime;
 mod typescript;
@@ -16,6 +17,12 @@ use std::sync::mpsc::channel;
 use std::time::Duration;
 
 fn main() {
+    // Load environment files before doing anything else
+    if let Err(e) = env_parser::load_env_files() {
+        eprintln!("Error loading environment files: {}", e);
+        process::exit(1);
+    }
+
     let args: Vec<String> = env::args().collect();
 
     let (watch_mode, filename) = parse_args(&args);
@@ -31,7 +38,7 @@ fn parse_args(args: &[String]) -> (bool, String) {
     if args.len() < 2 {
         print_error("Invalid arguments");
         println!(
-            "Usage: {} {} <javascript_file>",
+            "Usage: {} {} <javascript_file> [script_args...]",
             "rode".bold(),
             "[--watch, -w]".dimmed()
         );
@@ -40,17 +47,22 @@ fn parse_args(args: &[String]) -> (bool, String) {
             "  {} Run script and watch for changes",
             "rode --watch script.js".cyan()
         );
+        println!(
+            "  {} Pass arguments to script",
+            "rode script.js arg1 arg2".cyan()
+        );
         process::exit(1);
     }
 
-    if args.len() == 3 && args[1] == "--watch" || args[1] == "-w" {
+    // Check for watch flag
+    if args.len() >= 3 && (args[1] == "--watch" || args[1] == "-w") {
         (true, args[2].clone())
-    } else if args.len() == 2 {
+    } else if args.len() >= 2 {
         (false, args[1].clone())
     } else {
         print_error("Invalid arguments");
         println!(
-            "Usage: {} {} <javascript_file>",
+            "Usage: {} {} <javascript_file> [script_args...]",
             "rode".bold(),
             "[--watch, -w]".dimmed()
         );
@@ -59,8 +71,6 @@ fn parse_args(args: &[String]) -> (bool, String) {
 }
 
 fn run_once(filename: String) {
-    print_header();
-
     let code = match fs::read_to_string(&filename) {
         Ok(content) => content,
         Err(err) => {
@@ -100,7 +110,7 @@ fn run_with_watch(filename: String) {
     }
 
     clear_screen();
-    print_header();
+
     print_watch_banner(&filename);
 
     // Initial run
@@ -131,7 +141,6 @@ fn run_with_watch(filename: String) {
         while rx.try_recv().is_ok() {}
 
         clear_screen();
-        print_header();
         print_restart_banner(&filename);
         run_script(&filename);
     }
@@ -176,18 +185,6 @@ fn run_script(filename: &str) {
 fn clear_screen() {
     print!("\x1B[2J\x1B[1;1H");
     io::stdout().flush().unwrap();
-}
-
-fn print_header() {
-    let version = env!("CARGO_PKG_VERSION");
-    println!();
-    println!("{}  {}", "🦀".bright_yellow(), "RODE".bright_blue().bold());
-    println!(
-        "   {} {}",
-        "JavaScript Runtime".dimmed(),
-        format!("v{}", version).dimmed()
-    );
-    println!();
 }
 
 fn print_watch_banner(filename: &str) {
